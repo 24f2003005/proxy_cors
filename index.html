@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-  <pre id="out">Loading live data...</pre>
+  <pre id="out"></pre> 
   <script>
     const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzhGONIBxcRFNd5PIYCT34iEkJIu557j3ooHNbD9PJXcWK3nV0q-OpPQSrCAyuyhhvP/exec';
-
+    
     fetch(googleScriptUrl)
       .then(res => res.text())
-      .then(data => document.getElementById('out').textContent = data)
-      .catch(err => document.getElementById('out').textContent = 'Error: ' + err.message);
+      .then(data => {
+          if(data) document.getElementById('out').textContent = data;
+      });
   </script>
 </body>
 </html>

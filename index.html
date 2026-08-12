@@ -1,35 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <body>
-  <pre id="out">Waking up Render server (this usually takes 50 seconds). Please wait...</pre>
+  <pre id="out">Loading live data...</pre>
   <script>
-    function fetchWithRetry() {
-      // Add a dynamic timestamp parameter (?nocache=...) to force a fresh fetch
-      const targetUrl = 'https://tds-p1-q5-spww.onrender.com/run.jsonl?nocache=' + Date.now();
-      
-      // Properly encode the target URL to ensure the proxy processes it correctly
-      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+    const targetUrl = 'https://tds-p1-q5-spww.onrender.com/run.jsonl?nocache=' + Date.now();
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
 
-      fetch(proxyUrl)
-        .then(res => {
-          if (!res.ok) throw new Error("Proxy timeout - server is still waking up.");
-          return res.text();
-        })
-        .then(data => {
-          if (data.trim() === "" || data.startsWith("<!DOCTYPE")) {
-            throw new Error("Server not ready yet.");
-          }
-          // Success: Display the fresh data
-          document.getElementById('out').textContent = data;
-        })
-        .catch(err => {
-          document.getElementById('out').textContent = "Waking up Render server... Retrying... (" + err.message + ")";
-          setTimeout(fetchWithRetry, 5000); 
-        });
-    }
-
-    // Start the first attempt
-    fetchWithRetry();
+    fetch(proxyUrl)
+      .then(res => {
+        if (!res.ok) throw new Error("Proxy blocked or failed.");
+        return res.text();
+      })
+      .then(data => document.getElementById('out').textContent = data)
+      .catch(err => document.getElementById('out').textContent = 'Error: ' + err.message);
   </script>
 </body>
 </html>

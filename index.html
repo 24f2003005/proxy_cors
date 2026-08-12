@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <pre id="out">Loading file from Render (may take ~50s to wake up)...</pre>
+  <script>
+    // Using AllOrigins: a 100% free proxy with no API keys
+    fetch('https://api.allorigins.win/raw?url=https://tds-p1-q5-spww.onrender.com/run.jsonl')
+      .then(res => res.text())
+      .then(data => document.getElementById('out').textContent = data)
+      .catch(err => document.getElementById('out').textContent = 'Error loading data: ' + err);
+  </script>
+</body>
+</html>

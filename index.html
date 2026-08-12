@@ -3,24 +3,26 @@
 <body>
   <pre id="out">Waking up Render server (this usually takes 50 seconds). Please wait...</pre>
   <script>
-    const proxyUrl = 'https://api.allorigins.win/raw?url=https://tds-p1-q5-spww.onrender.com/run.jsonl';
-
     function fetchWithRetry() {
+      // Add a dynamic timestamp parameter (?nocache=...) to force a fresh fetch
+      const targetUrl = 'https://tds-p1-q5-spww.onrender.com/run.jsonl?nocache=' + Date.now();
+      
+      // Properly encode the target URL to ensure the proxy processes it correctly
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+
       fetch(proxyUrl)
         .then(res => {
           if (!res.ok) throw new Error("Proxy timeout - server is still waking up.");
           return res.text();
         })
         .then(data => {
-          // If the proxy returns an empty string or HTML error, keep retrying
           if (data.trim() === "" || data.startsWith("<!DOCTYPE")) {
             throw new Error("Server not ready yet.");
           }
-          // Success: Display the data
+          // Success: Display the fresh data
           document.getElementById('out').textContent = data;
         })
         .catch(err => {
-          // Update text and retry every 5 seconds until successful
           document.getElementById('out').textContent = "Waking up Render server... Retrying... (" + err.message + ")";
           setTimeout(fetchWithRetry, 5000); 
         });

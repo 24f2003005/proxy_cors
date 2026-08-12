@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html>
 <body>
-  <pre id="out">Loading file from Render (may take ~50s to wake up)...</pre>
+  <pre id="out">Waking up Render server (this usually takes 50 seconds). Please wait...</pre>
   <script>
-    // Using AllOrigins: a 100% free proxy with no API keys
-    fetch('https://api.allorigins.win/raw?url=https://tds-p1-q5-spww.onrender.com/run.jsonl')
-      .then(res => res.text())
-      .then(data => document.getElementById('out').textContent = data)
-      .catch(err => document.getElementById('out').textContent = 'Error loading data: ' + err);
+    const proxyUrl = 'https://api.allorigins.win/raw?url=https://tds-p1-q5-spww.onrender.com/run.jsonl';
+
+    function fetchWithRetry() {
+      fetch(proxyUrl)
+        .then(res => {
+          if (!res.ok) throw new Error("Proxy timeout - server is still waking up.");
+          return res.text();
+        })
+        .then(data => {
+          // If the proxy returns an empty string or HTML error, keep retrying
+          if (data.trim() === "" || data.startsWith("<!DOCTYPE")) {
+            throw new Error("Server not ready yet.");
+          }
+          // Success: Display the data
+          document.getElementById('out').textContent = data;
+        })
+        .catch(err => {
+          // Update text and retry every 5 seconds until successful
+          document.getElementById('out').textContent = "Waking up Render server... Retrying... (" + err.message + ")";
+          setTimeout(fetchWithRetry, 5000); 
+        });
+    }
+
+    // Start the first attempt
+    fetchWithRetry();
   </script>
 </body>
 </html>

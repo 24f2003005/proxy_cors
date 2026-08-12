@@ -3,14 +3,10 @@
 <body>
   <pre id="out">Loading live data...</pre>
   <script>
-    const targetUrl = 'https://tds-p1-q5-spww.onrender.com/run.jsonl?nocache=' + Date.now();
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+    const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzhGONIBxcRFNd5PIYCT34iEkJIu557j3ooHNbD9PJXcWK3nV0q-OpPQSrCAyuyhhvP/exec';
 
-    fetch(proxyUrl)
-      .then(res => {
-        if (!res.ok) throw new Error("Proxy blocked or failed.");
-        return res.text();
-      })
+    fetch(googleScriptUrl)
+      .then(res => res.text())
       .then(data => document.getElementById('out').textContent = data)
       .catch(err => document.getElementById('out').textContent = 'Error: ' + err.message);
   </script>
